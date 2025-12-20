@@ -4,7 +4,7 @@ FROM confluentinc/cp-schema-registry:7.5.0 AS schema-registry-base
 
 FROM ubuntu:22.04
 
-ENV API=kafka-rest
+ENV API=kafka-rest-proxy
 ENV TOOL=${TOOL:-manual}
 ENV RUN=${RUN:-1}
 ENV DEBIAN_FRONTEND=noninteractive
@@ -45,7 +45,7 @@ RUN apt-get update && \
 
 RUN pip3 install mitmproxy
 
-COPY apis/infrastructure/ /infrastructure/
+COPY ./infrastructure/ /infrastructure/
 
 COPY --from=kafka-base /usr/bin/kafka-* /usr/bin/
 COPY --from=kafka-base /etc/kafka /etc/kafka
@@ -64,11 +64,11 @@ COPY --from=kafka-rest-base /usr/share/java/kafka-rest-lib /usr/share/java/kafka
 COPY --from=kafka-rest-base /etc/kafka-rest /etc/kafka-rest
 COPY --from=kafka-rest-base /usr/bin/kafka-rest-* /usr/bin/
 
-COPY apis/kafka-rest/specifications /api/specifications
-COPY apis/kafka-rest/start-kafka-stack.sh /usr/local/bin/start-kafka-stack.sh
-COPY apis/kafka-rest/server.properties /etc/kafka/kraft/server.properties
-COPY apis/kafka-rest/kafka-rest.properties /etc/kafka-rest/kafka-rest.properties
-COPY apis/kafka-rest/schema-registry.properties /etc/schema-registry/schema-registry.properties
+#COPY apis/kafka-rest/specifications /api/specifications
+COPY ./apis/kafka-rest-proxy/start-kafka-stack.sh /usr/local/bin/start-kafka-stack.sh
+COPY ./apis/kafka-rest-proxy/server.properties /etc/kafka/kraft/server.properties
+COPY ./apis/kafka-rest-proxy/kafka-rest.properties /etc/kafka-rest/kafka-rest.properties
+COPY ./apis/kafka-rest-proxy/schema-registry.properties /etc/schema-registry/schema-registry.properties
 
 RUN chmod +x /usr/local/bin/start-kafka-stack.sh
 
