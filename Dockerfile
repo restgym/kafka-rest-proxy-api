@@ -27,12 +27,23 @@ ENV KAFKA_REST_LISTENERS=http://0.0.0.0:8082
 ENV KAFKA_REST_BOOTSTRAP_SERVERS=localhost:9092
 ENV KAFKA_REST_SCHEMA_REGISTRY_URL=http://localhost:8081
 
-RUN mkdir -p /api /infrastructure /results /var/lib/kafka/data
+RUN mkdir -p /api /infrastructure /results /api/classes /var/lib/kafka/data /etc/kafka /etc/schema-registry
 
 RUN apt-get update && \
-    apt-get -y install openjdk-17-jdk mitmproxy curl wget python3 unzip procps && \
+    apt-get -y upgrade && \
+    apt-get -y install \
+        openjdk-17-jdk \
+        curl \
+        wget \
+        netcat \
+        python3 \
+        python3-pip \
+        unzip && \
+    apt-get -y autoremove && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install mitmproxy
 
 COPY ./infrastructure/ /infrastructure/
 
@@ -40,6 +51,7 @@ COPY --from=kafka-base /usr/bin/kafka-* /usr/bin/
 COPY --from=kafka-base /etc/kafka /etc/kafka
 COPY --from=kafka-base /usr/share/java/kafka /usr/share/java/kafka
 COPY --from=kafka-base /usr/share/java/cp-base-new /usr/share/java/cp-base-new
+
 COPY --from=schema-registry-base /usr/share/java/schema-registry /usr/share/java/schema-registry
 COPY --from=schema-registry-base /usr/share/java/confluent-common /usr/share/java/confluent-common
 COPY --from=schema-registry-base /usr/share/java/confluent-telemetry /usr/share/java/confluent-telemetry
@@ -47,26 +59,29 @@ COPY --from=schema-registry-base /usr/share/java/rest-utils /usr/share/java/rest
 COPY --from=schema-registry-base /usr/share/java/kafka-serde-tools /usr/share/java/kafka-serde-tools
 COPY --from=schema-registry-base /etc/schema-registry /etc/schema-registry
 COPY --from=schema-registry-base /usr/bin/schema-registry-* /usr/bin/
+
 COPY --from=kafka-rest-base /usr/share/java/kafka-rest-lib /usr/share/java/kafka-rest-lib
 COPY --from=kafka-rest-base /etc/kafka-rest /etc/kafka-rest
 COPY --from=kafka-rest-base /usr/bin/kafka-rest-* /usr/bin/
 
-RUN mkdir -p /api/classes
-
-RUN cd /api/classes && \
-    unzip -q /usr/share/java/kafka-rest-lib/kafka-rest-*.jar 'io/confluent/**/*.class' || true
-
-RUN cd /api/classes && \
-    unzip -q /usr/share/java/rest-utils/rest-utils-*.jar 'io/confluent/**/*.class' || true
-
-RUN chmod -R 755 /api/classes
-
-
-COPY ./apis/kafka-rest-proxy/ /api/
+#COPY apis/kafka-rest/specifications /api/specifications
 COPY ./apis/kafka-rest-proxy/start-kafka-stack.sh /usr/local/bin/start-kafka-stack.sh
-COPY ./apis/kafka-rest-proxy/specifications/ /api/specifications/
+COPY ./apis/kafka-rest-proxy/server.properties /etc/kafka/kraft/server.properties
+COPY ./apis/kafka-rest-proxy/kafka-rest.properties /etc/kafka-rest/kafka-rest.properties
+COPY ./apis/kafka-rest-proxy/schema-registry.properties /etc/schema-registry/schema-registry.properties
+
 RUN chmod +x /usr/local/bin/start-kafka-stack.sh
 
-EXPOSE 9090 12345
+RUN cd /api/classes && \
+    unzip -q /usr/share/java/kafka-rest-lib/kafka-rest-*.jar 'io/confluent/**/*.class' 2>/dev/null || true
 
-CMD ["/usr/local/bin/start-kafka-stack.sh"]
+WORKDIR /var/lib/kafka
+
+EXPOSE 8082 9090 12345 9092 8081
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=5 \
+    CMD curl -f http://localhost:8082/v3/clusters || exit 1
+
+CMD mkdir -p /results/$API/$TOOL/$RUN/code-coverage && \
+    cp -r /api/specifications /results/$API/$TOOL/$RUN/ && \
+    /usr/local/bin/start-kafka-stack.sh
