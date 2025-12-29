@@ -15,12 +15,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:9090/v3",
+      "url": "http://localhost:9090",
       "description": "Kafka REST Proxy standalone with embedded Kafka"
     }
   ],
   "paths": {
-    "/clusters": {
+    "/v3/clusters": {
       "x-audience": "component-internal",
       "get": {
         "summary": "List Clusters",
@@ -51,7 +51,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}": {
+    "/v3/clusters/{cluster_id}": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -86,7 +86,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/acls:batch": {
+    "/v3/clusters/{cluster_id}/acls:batch": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -124,7 +124,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/acls": {
+    "/v3/clusters/{cluster_id}/acls": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -264,7 +264,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/broker-configs": {
+    "/v3/clusters/{cluster_id}/broker-configs": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -299,7 +299,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/broker-configs:alter": {
+    "/v3/clusters/{cluster_id}/broker-configs:alter": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -337,7 +337,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/broker-configs/{name}": {
+    "/v3/clusters/{cluster_id}/broker-configs/{name}": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -434,7 +434,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/brokers": {
+    "/v3/clusters/{cluster_id}/brokers": {
       "x-audience": "component-internal",
       "parameters": [
         {
@@ -469,7 +469,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/brokers/{broker_id}": {
+    "/v3/clusters/{cluster_id}/brokers/{broker_id}": {
       "x-audience": "component-internal",
       "parameters": [
         {
@@ -507,7 +507,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/brokers/-/configs": {
+    "/v3/clusters/{cluster_id}/brokers/-/configs": {
       "x-audience": "component-internal",
       "parameters": [
         {
@@ -542,7 +542,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/brokers/{broker_id}/configs": {
+    "/v3/clusters/{cluster_id}/brokers/{broker_id}/configs": {
       "x-audience": "component-internal",
       "parameters": [
         {
@@ -580,7 +580,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/brokers/{broker_id}/configs:alter": {
+    "/v3/clusters/{cluster_id}/brokers/{broker_id}/configs:alter": {
       "x-audience": "component-internal",
       "parameters": [
         {
@@ -621,7 +621,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/brokers/{broker_id}/configs/{name}": {
+    "/v3/clusters/{cluster_id}/brokers/{broker_id}/configs/{name}": {
       "x-audience": "component-internal",
       "parameters": [
         {
@@ -719,7 +719,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/brokers/{broker_id}/partition-replicas": {
+    "/v3/clusters/{cluster_id}/brokers/{broker_id}/partition-replicas": {
       "x-audience": "component-internal",
       "parameters": [
         {
@@ -758,7 +758,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/consumer-groups": {
+    "/v3/clusters/{cluster_id}/consumer-groups": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -793,7 +793,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/consumer-groups/{consumer_group_id}": {
+    "/v3/clusters/{cluster_id}/consumer-groups/{consumer_group_id}": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -831,7 +831,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/consumer-groups/{consumer_group_id}/consumers": {
+    "/v3/clusters/{cluster_id}/consumer-groups/{consumer_group_id}/consumers": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -869,7 +869,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/consumer-groups/{consumer_group_id}/lag-summary": {
+    "/v3/clusters/{cluster_id}/consumer-groups/{consumer_group_id}/lag-summary": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -907,7 +907,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/consumer-groups/{consumer_group_id}/lags": {
+    "/v3/clusters/{cluster_id}/consumer-groups/{consumer_group_id}/lags": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -945,7 +945,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/consumer-groups/{consumer_group_id}/lags/{topic_name}/partitions/{partition_id}": {
+    "/v3/clusters/{cluster_id}/consumer-groups/{consumer_group_id}/lags/{topic_name}/partitions/{partition_id}": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -989,7 +989,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/consumer-groups/{consumer_group_id}/consumers/{consumer_id}": {
+    "/v3/clusters/{cluster_id}/consumer-groups/{consumer_group_id}/consumers/{consumer_id}": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -1030,7 +1030,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/consumer-groups/{consumer_group_id}/consumers/{consumer_id}/assignments": {
+    "/v3/clusters/{cluster_id}/consumer-groups/{consumer_group_id}/consumers/{consumer_id}/assignments": {
       "x-audience": "component-internal",
       "parameters": [
         {
@@ -1072,7 +1072,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/consumer-groups/{consumer_group_id}/consumers/{consumer_id}/assignments/{topic_name}/partitions/{partition_id}": {
+    "/v3/clusters/{cluster_id}/consumer-groups/{consumer_group_id}/consumers/{consumer_id}/assignments/{topic_name}/partitions/{partition_id}": {
       "x-audience": "component-internal",
       "parameters": [
         {
@@ -1120,7 +1120,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics": {
+    "/v3/clusters/{cluster_id}/topics": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -1189,7 +1189,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics/{topic_name}": {
+    "/v3/clusters/{cluster_id}/topics/{topic_name}": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -1297,7 +1297,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics/{topic_name}/configs": {
+    "/v3/clusters/{cluster_id}/topics/{topic_name}/configs": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -1338,7 +1338,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics/{topic_name}/configs:alter": {
+    "/v3/clusters/{cluster_id}/topics/{topic_name}/configs:alter": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -1382,7 +1382,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics/{topic_name}/configs/{name}": {
+    "/v3/clusters/{cluster_id}/topics/{topic_name}/configs/{name}": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -1491,7 +1491,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics/{topic_name}/partitions/{partition_id}/offset": {
+    "/v3/clusters/{cluster_id}/topics/{topic_name}/partitions/{partition_id}/offset": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -1540,7 +1540,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics/{topic_name}/partitions": {
+    "/v3/clusters/{cluster_id}/topics/{topic_name}/partitions": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -1581,7 +1581,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics/{topic_name}/partitions/{partition_id}": {
+    "/v3/clusters/{cluster_id}/topics/{topic_name}/partitions/{partition_id}": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -1625,7 +1625,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics/-/partitions/-/reassignment": {
+    "/v3/clusters/{cluster_id}/topics/-/partitions/-/reassignment": {
       "x-audience": "component-internal",
       "parameters": [
         {
@@ -1663,7 +1663,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics/{topic_name}/partitions/-/reassignment": {
+    "/v3/clusters/{cluster_id}/topics/{topic_name}/partitions/-/reassignment": {
       "x-audience": "component-internal",
       "parameters": [
         {
@@ -1704,7 +1704,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics/{topic_name}/partitions/{partition_id}/reassignment": {
+    "/v3/clusters/{cluster_id}/topics/{topic_name}/partitions/{partition_id}/reassignment": {
       "x-audience": "component-internal",
       "parameters": [
         {
@@ -1748,7 +1748,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics/{topic_name}/partitions/{partition_id}/replicas": {
+    "/v3/clusters/{cluster_id}/topics/{topic_name}/partitions/{partition_id}/replicas": {
       "x-audience": "component-internal",
       "parameters": [
         {
@@ -1792,7 +1792,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics/{topic_name}/partitions/{partition_id}/replicas/{broker_id}": {
+    "/v3/clusters/{cluster_id}/topics/{topic_name}/partitions/{partition_id}/replicas/{broker_id}": {
       "x-audience": "component-internal",
       "parameters": [
         {
@@ -1839,7 +1839,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics/-/configs": {
+    "/v3/clusters/{cluster_id}/topics/-/configs": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -1874,7 +1874,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics/{topic_name}/records": {
+    "/v3/clusters/{cluster_id}/topics/{topic_name}/records": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
@@ -1927,7 +1927,7 @@
         }
       }
     },
-    "/clusters/{cluster_id}/topics/{topic_name}/records:batch": {
+    "/v3/clusters/{cluster_id}/topics/{topic_name}/records:batch": {
       "parameters": [
         {
           "$ref": "#/components/parameters/ClusterId"
