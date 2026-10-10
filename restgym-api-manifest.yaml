@@ -1,0 +1,19 @@
+# RESTgym API manifest
+manifest_version: 1
+
+id: kafka-rest-proxy
+name: Confluent REST Proxy for Kafka
+version: "7.5.0"                  # confluentinc/cp-kafka-rest:7.5.0
+description: RESTful interface to an Apache Kafka cluster (REST Admin API v3).
+domain: messaging
+license: LicenseRef-Confluent-Community-1.0    # Confluent Community License 1.0 (no SPDX identifier)
+repository: https://github.com/confluentinc/kafka-rest
+technology:
+  language: java
+  # framework:                    # not verified
+  # database:                     # none; Kafka broker and Schema Registry run in the same container
+
+authentication: none
+
+server_errors:
+  similarity_threshold: 0.7
