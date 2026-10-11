@@ -61,12 +61,11 @@ RUN cd /api/classes && \
 
 RUN chmod -R 755 /api/classes
 
-
 COPY ./apis/kafka-rest-proxy/ /api/
-COPY ./apis/kafka-rest-proxy/start-kafka-stack.sh /usr/local/bin/start-kafka-stack.sh
-COPY ./apis/kafka-rest-proxy/specifications/ /api/specifications/
-RUN chmod +x /usr/local/bin/start-kafka-stack.sh
 
 EXPOSE 9090 12345
 
-CMD ["/usr/local/bin/start-kafka-stack.sh"]
+# Startup script: starts the API, the collection of code coverage and the proxy (see infrastructure/api/restgym-api.sh)
+COPY ./apis/kafka-rest-proxy/entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT ["bash", "/entrypoint.sh"]
