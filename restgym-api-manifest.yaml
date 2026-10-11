@@ -13,6 +13,12 @@ technology:
   # framework:                    # not verified
   # database:                     # none; Kafka broker and Schema Registry run in the same container
 
+original_specification:           # OpenAPI 3.0.0, written by the authors: api/v3/openapi.yaml in the repository
+  version: "3.0"
+  format: yaml
+  origin: manual
+  created_by: Confluent Kafka REST developers
+
 authentication: none
 
 server_errors:
