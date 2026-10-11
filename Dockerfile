@@ -4,9 +4,6 @@ FROM confluentinc/cp-schema-registry:7.5.0 AS schema-registry-base
 
 FROM ubuntu:22.04
 
-ENV API=kafka-rest-proxy
-ENV TOOL=${TOOL:-manual}
-ENV RUN=${RUN:-1}
 ENV DEBIAN_FRONTEND=noninteractive
 ENV KAFKA_CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
 ENV KAFKA_NODE_ID=1
