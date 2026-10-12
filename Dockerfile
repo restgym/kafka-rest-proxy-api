@@ -4,7 +4,7 @@ FROM confluentinc/cp-kafka:7.5.0 AS kafka-base
 FROM confluentinc/cp-schema-registry:7.5.0 AS schema-registry-base
 
 # Base image: Ubuntu 22.04, Java 17 (headless JRE), mitmproxy and the RESTgym infrastructure (see infrastructure/api/Dockerfile)
-FROM restgym-api-base:java17
+FROM restgym/api-base:java17
 
 ENV KAFKA_CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
 ENV KAFKA_NODE_ID=1
