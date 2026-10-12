@@ -1,10 +1,11 @@
+# Kafka REST Proxy 7.5.0, with the Kafka broker (KRaft mode) and Schema Registry of Confluent Platform 7.5.0 in the same container
 FROM confluentinc/cp-kafka-rest:7.5.0 AS kafka-rest-base
 FROM confluentinc/cp-kafka:7.5.0 AS kafka-base
 FROM confluentinc/cp-schema-registry:7.5.0 AS schema-registry-base
 
-FROM ubuntu:22.04
+# Base image: Ubuntu 22.04, Java 17 (headless JRE), mitmproxy and the RESTgym infrastructure (see infrastructure/api/Dockerfile)
+FROM restgym-api-base:java17
 
-ENV DEBIAN_FRONTEND=noninteractive
 ENV KAFKA_CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
 ENV KAFKA_NODE_ID=1
 ENV KAFKA_PROCESS_ROLES=broker,controller
@@ -24,15 +25,13 @@ ENV KAFKA_REST_LISTENERS=http://0.0.0.0:8082
 ENV KAFKA_REST_BOOTSTRAP_SERVERS=localhost:9092
 ENV KAFKA_REST_SCHEMA_REGISTRY_URL=http://localhost:8081
 
-RUN mkdir -p /api /infrastructure /results /var/lib/kafka/data
+# ps (used by the scripts of Kafka), curl (used by entrypoint.sh) and unzip (to extract the classes for code coverage)
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl procps unzip \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /var/lib/kafka/data
 
-RUN apt-get update && \
-    apt-get -y install openjdk-17-jdk mitmproxy curl wget python3 unzip procps && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-COPY ./infrastructure/ /infrastructure/
-
+# Kafka, Schema Registry and Kafka REST Proxy, from the images of Confluent
 COPY --from=kafka-base /usr/bin/kafka-* /usr/bin/
 COPY --from=kafka-base /etc/kafka /etc/kafka
 COPY --from=kafka-base /usr/share/java/kafka /usr/share/java/kafka
@@ -48,21 +47,15 @@ COPY --from=kafka-rest-base /usr/share/java/kafka-rest-lib /usr/share/java/kafka
 COPY --from=kafka-rest-base /etc/kafka-rest /etc/kafka-rest
 COPY --from=kafka-rest-base /usr/bin/kafka-rest-* /usr/bin/
 
-RUN mkdir -p /api/classes
+# Classes for code coverage: the io.confluent classes of Kafka REST Proxy and of the REST utilities of Confluent
+RUN mkdir -p /api/classes \
+    && cd /api/classes \
+    && (unzip -q /usr/share/java/kafka-rest-lib/kafka-rest-*.jar 'io/confluent/**/*.class' || true) \
+    && (unzip -q /usr/share/java/rest-utils/rest-utils-*.jar 'io/confluent/**/*.class' || true) \
+    && chmod -R 755 /api/classes
 
-RUN cd /api/classes && \
-    unzip -q /usr/share/java/kafka-rest-lib/kafka-rest-*.jar 'io/confluent/**/*.class' || true
-
-RUN cd /api/classes && \
-    unzip -q /usr/share/java/rest-utils/rest-utils-*.jar 'io/confluent/**/*.class' || true
-
-RUN chmod -R 755 /api/classes
-
+# The API: its specifications and scripts
 COPY ./apis/kafka-rest-proxy/ /api/
 
-EXPOSE 9090 12345
-
-# Startup script: starts the API, the collection of code coverage and the proxy (see infrastructure/api/restgym-api.sh)
-COPY ./apis/kafka-rest-proxy/entrypoint.sh /entrypoint.sh
-
-ENTRYPOINT ["bash", "/entrypoint.sh"]
+# Startup script (in /api): starts the API, the collection of code coverage and the proxy (see infrastructure/api/restgym-api.sh)
+ENTRYPOINT ["bash", "/api/entrypoint.sh"]

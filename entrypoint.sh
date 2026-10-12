@@ -11,5 +11,5 @@ restgym_start_service "Schema Registry" \
     sh -c 'exec schema-registry-start /etc/schema-registry/schema-registry.properties > /tmp/schema-registry.log 2>&1'
 restgym_wait_until "Schema Registry" curl -sf http://localhost:8081/
 
-export KAFKAREST_OPTS="-javaagent:/infrastructure/jacoco/org.jacoco.agent-0.8.7-runtime.jar=includes=io.confluent.*,output=tcpserver,port=12345,address=* -Dfile.encoding=UTF-8"
+export KAFKAREST_OPTS="-javaagent:/infrastructure/jacoco/org.jacoco.agent-0.8.12-runtime.jar=includes=io.confluent.*,output=tcpserver,port=12345,address=* -Dfile.encoding=UTF-8"
 restgym_run_api 8082 kafka-rest-start /etc/kafka-rest/kafka-rest.properties
