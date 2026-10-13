@@ -33,13 +33,25 @@ More details (e.g., how 5XX responses are grouped into unique failures) are in t
 
 ## How RESTgym runs it
 
-The image starts from the base image of RESTgym for Java 17 (`restgym/api-base:java17`), which contains the proxy and the collection of code coverage. The image copies the REST Proxy, the Kafka broker and Schema Registry from the official Confluent images (`confluentinc/cp-kafka-rest`, `cp-kafka` and `cp-schema-registry`, version 7.5.0) onto the base image of RESTgym. `entrypoint.sh` starts Kafka (KRaft mode, a single node) and Schema Registry with the default configuration files of the Confluent images, then the REST Proxy on port 8082. The classes for code coverage (the `io.confluent` classes of the REST Proxy and of the REST utilities of Confluent) are extracted from their jars when the image is built, so this repository has no `classes/`. The tools reach the API through the proxy of RESTgym, on port 9090.
+The image starts from the base image of RESTgym for Java 17 (`restgym/api-base:java17`), which contains the proxy and the collection of code coverage. The image copies the REST Proxy, the Kafka broker and Schema Registry from the official Confluent images (`confluentinc/cp-kafka-rest`, `cp-kafka` and `cp-schema-registry`, version 7.5.0) onto the base image of RESTgym. `entrypoint.sh` starts Kafka (KRaft mode, a single node) and Schema Registry, then the REST Proxy on port 8082, with the default configuration files of the Confluent packages (see [Configuration](#configuration)). The REST Proxy logs (e.g., the errors behind its 5XX responses) are in the output of the container (`logs/kafka-rest-proxy-stdout.log` in the results of a run); those of Kafka and Schema Registry are in `/tmp/kafka.log` and `/tmp/schema-registry.log` in the container. The classes for code coverage (the `io.confluent` classes of the REST Proxy and of the REST utilities of Confluent) are extracted from their jars when the image is built, so this repository has no `classes/`. The tools reach the API through the proxy of RESTgym, on port 9090.
+
+### Configuration
+
+The services read the default configuration files copied from the Confluent images, unchanged. The Confluent images generate these files from `KAFKA_*` (and `KAFKA_REST_*`, `SCHEMA_REGISTRY_*`) variables when they start, with their own startup scripts (`/etc/confluent/docker`), which this image does not copy nor run: the only variable used is `KAFKA_CLUSTER_ID`, with which `entrypoint.sh` formats the storage of the broker.
+
+| Service | File | Main settings |
+|---|---|---|
+| Kafka broker | `/etc/kafka/kraft/server.properties` | Broker and controller in one node (`node.id=1`), listeners `localhost:9092` (clients) and `localhost:9093` (controller), data in `/tmp/kraft-combined-logs`; replication factor 1, `num.partitions=1`, `auto.create.topics.enable` and `delete.topic.enable` true (defaults) |
+| Schema Registry | `/etc/schema-registry/schema-registry.properties` | Listener `http://0.0.0.0:8081`, schemas in the topic `_schemas` of the broker, compatibility `backward` (default) |
+| REST Proxy | `/etc/kafka-rest/kafka-rest.properties` | Only `bootstrap.servers=localhost:9092`; the rest is default: listener `http://0.0.0.0:8082`, Schema Registry at `http://localhost:8081` (records with AVRO, JSON Schema or Protobuf schemas are registered there) |
+
+With a single broker, a replication factor above 1 (e.g., `replication_factor` in `POST /v3/clusters/{cluster_id}/topics`) fails, as in any cluster of one broker. The id of the cluster that the API answers (`MkU3OEVBNTcwNTJENDM2Qg`) differs in its last character from `KAFKA_CLUSTER_ID` (`MkU3OEVBNTcwNTJENDM2Qk`): both encode the same 16 bytes, and Kafka answers the canonical encoding.
 
 ## Changes made by RESTgym
 
 ### API
 
-None: the official Confluent images, unchanged.
+None: the official Confluent images, unchanged. The image copies their programs and libraries, also `/usr/share/java/kafka-rest-bin`, which the REST Proxy needs to log (it has the binding of SLF4J to log4j: without it, the REST Proxy logged nothing until 2026-10-13, so the runs before have no log of the REST Proxy).
 
 ### Specification
 
