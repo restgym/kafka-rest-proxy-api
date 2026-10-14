@@ -1,7 +1,8 @@
 # Kafka REST Proxy 7.5.0, with the Kafka broker (KRaft mode) and Schema Registry of Confluent Platform 7.5.0 in the same container
-FROM confluentinc/cp-kafka-rest:7.5.0 AS kafka-rest-base
-FROM confluentinc/cp-kafka:7.5.0 AS kafka-base
-FROM confluentinc/cp-schema-registry:7.5.0 AS schema-registry-base
+# (the images of Confluent are pinned to a digest, since a tag can be moved to a rebuilt image)
+FROM confluentinc/cp-kafka-rest:7.5.0@sha256:161d9e268f7e6c4e4f6af90ab91b8bf54d7bd35a5a27072a6ec26f323c22d439 AS kafka-rest-base
+FROM confluentinc/cp-kafka:7.5.0@sha256:fbbb6fa11b258a88b83f54d4f0bddfcffbf2279f99d66a843486e3da7bdfbf41 AS kafka-base
+FROM confluentinc/cp-schema-registry:7.5.0@sha256:e51684b472a2481f065f44616d3d8ad2182029a7011f949a612d35b54566a1f6 AS schema-registry-base
 
 # Base image: Ubuntu 22.04, Java 17 (headless JRE), mitmproxy and the RESTgym infrastructure (see infrastructure/api/Dockerfile)
 FROM restgym/api-base:java17
