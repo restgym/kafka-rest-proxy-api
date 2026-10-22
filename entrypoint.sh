@@ -4,8 +4,13 @@
 source /infrastructure/api/restgym-api.sh
 
 # Kafka broker (KRaft mode) and Schema Registry
+# The authorizer of Kafka (StandardAuthorizer), so that the ACL operations of the API work (without it, they always
+# answer 400 "No Authorizer is configured"). Every client of the broker is User:ANONYMOUS (listeners without
+# authentication), a super user: the ACLs are stored and listed, but never restrict a request (see the README)
 kafka-storage format -t "$KAFKA_CLUSTER_ID" -c /etc/kafka/kraft/server.properties
-restgym_start_service Kafka sh -c 'exec kafka-server-start /etc/kafka/kraft/server.properties > /tmp/kafka.log 2>&1'
+restgym_start_service Kafka sh -c 'exec kafka-server-start /etc/kafka/kraft/server.properties \
+    --override authorizer.class.name=org.apache.kafka.metadata.authorizer.StandardAuthorizer \
+    --override super.users=User:ANONYMOUS > /tmp/kafka.log 2>&1'
 restgym_wait_until Kafka kafka-broker-api-versions --bootstrap-server localhost:9092
 restgym_start_service "Schema Registry" \
     sh -c 'exec schema-registry-start /etc/schema-registry/schema-registry.properties > /tmp/schema-registry.log 2>&1'

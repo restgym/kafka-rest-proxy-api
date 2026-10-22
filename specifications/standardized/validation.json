@@ -1,0 +1,27 @@
+{
+  "validator": {
+    "name": "Swagger Validator (swagger-validator-v2, swagger-parser)",
+    "image": "swaggerapi/swagger-validator-v2:v2.1.9",
+    "endpoint": "POST /validator/debug",
+    "options": "defaults"
+  },
+  "validated_on": "2026-10-22T14:10:42+02:00",
+  "files": {
+    "kafka-rest-proxy-openapi.json": {
+      "messages": [],
+      "schemaValidationMessages": []
+    },
+    "kafka-rest-proxy-openapi.yaml": {
+      "messages": [],
+      "schemaValidationMessages": []
+    },
+    "kafka-rest-proxy-swagger.json": {
+      "messages": [],
+      "schemaValidationMessages": []
+    },
+    "kafka-rest-proxy-swagger.yaml": {
+      "messages": [],
+      "schemaValidationMessages": []
+    }
+  }
+}

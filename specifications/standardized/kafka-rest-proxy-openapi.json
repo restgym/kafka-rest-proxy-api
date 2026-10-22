@@ -15,8 +15,9 @@
   },
   "servers": [
     {
-      "url": "http://localhost:9090",
-      "description": "Kafka REST Proxy standalone with embedded Kafka"
+      "url": "http://localhost:8082",
+      "x-audience": "component-internal",
+      "description": "Kafka REST Proxy. See https://docs.confluent.io/current/kafka-rest/index.html."
     }
   ],
   "paths": {
@@ -1491,55 +1492,6 @@
         }
       }
     },
-    "/v3/clusters/{cluster_id}/topics/{topic_name}/partitions/{partition_id}/offset": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/ClusterId"
-        },
-        {
-          "$ref": "#/components/parameters/TopicName"
-        },
-        {
-          "$ref": "#/components/parameters/PartitionId"
-        }
-      ],
-      "get": {
-        "summary": "List Partition Offsets",
-        "operationId": "listKafkaPartitionOffsets",
-        "description": "[![Generally Available](https://img.shields.io/badge/Lifecycle%20Stage-Generally%20Available-%2345c6e8)](#section/Versioning/API-Lifecycle-Policy)\n\nReturn the earliest and latest offsets of a partition with the given `partition_id`.",
-        "tags": [
-          "Partition (v3)"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/OffsetType"
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/ListPartitionOffsetsResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequestErrorResponse"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedErrorResponse"
-          },
-          "403": {
-            "$ref": "#/components/responses/ForbiddenErrorResponse"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFoundErrorResponse"
-          },
-          "429": {
-            "$ref": "#/components/responses/TooManyRequestsErrorResponse"
-          },
-          "5XX": {
-            "$ref": "#/components/responses/ServerErrorResponse"
-          }
-        }
-      }
-    },
     "/v3/clusters/{cluster_id}/topics/{topic_name}/partitions": {
       "parameters": [
         {
@@ -1886,7 +1838,7 @@
       "post": {
         "summary": "Produce Records",
         "operationId": "produceRecord",
-        "description": "[![Generally Available](https://img.shields.io/badge/Lifecycle%20Stage-Generally%20Available-%2345c6e8)](#section/Versioning/API-Lifecycle-Policy)\n\nProduce records to the given topic, returning delivery reports for each\n            record produced. This API can be used in streaming mode by setting \"Transfer-Encoding:\n            chunked\" header. For as long as the connection is kept open, the server will\n            keep accepting records. Records are streamed to and from the server as Concatenated \n            JSON. For each record sent to the server, the server will\n            asynchronously send back a delivery report, in the same order, each with its own\n            error_code. An error_code of 200 indicates success. The HTTP status code will be HTTP \n            200 OK as long as the connection is successfully established. To identify records\n            that have encountered an error, check the error_code of each delivery report.\n\nNote that the cluster_id is validated only when running in Confluent\nCloud.",
+        "description": "[![Generally Available](https://img.shields.io/badge/Lifecycle%20Stage-Generally%20Available-%2345c6e8)](#section/Versioning/API-Lifecycle-Policy)\n\nProduce records to the given topic, returning delivery reports for each\n            record produced. This API can be used in streaming mode by setting \"Transfer-Encoding:\n            chunked\" header. For as long as the connection is kept open, the server will\n            keep accepting records. Records are streamed to and from the server as Concatenated \n            JSON. For each record sent to the server, the server will\n            asynchronously send back a delivery report, in the same order, each with its own\n            error_code. An error_code of 200 indicates success. The HTTP status code will be HTTP \n            200 OK as long as the connection is successfully established. To identify records\n            that have encountered an error, check the error_code of each delivery report.",
         "tags": [
           "Records (v3)"
         ],
@@ -1897,9 +1849,6 @@
           "200": {
             "$ref": "#/components/responses/ProduceResponse"
           },
-          "400": {
-            "$ref": "#/components/responses/BadRequestErrorResponse_ProduceRecords"
-          },
           "401": {
             "$ref": "#/components/responses/UnauthorizedErrorResponse"
           },
@@ -1908,12 +1857,6 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFoundErrorResponse"
-          },
-          "413": {
-            "$ref": "#/components/responses/RequestEntityTooLargeErrorResponse"
-          },
-          "415": {
-            "$ref": "#/components/responses/UnsupportedMediaTypeErrorResponse"
           },
           "422": {
             "$ref": "#/components/responses/UnprocessableEntity_ProduceRecord"
@@ -1950,9 +1893,6 @@
           "207": {
             "$ref": "#/components/responses/ProduceBatchResponse"
           },
-          "400": {
-            "$ref": "#/components/responses/BadRequestErrorResponse_ProduceRecords"
-          },
           "401": {
             "$ref": "#/components/responses/UnauthorizedErrorResponse"
           },
@@ -1961,9 +1901,6 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFoundErrorResponse"
-          },
-          "415": {
-            "$ref": "#/components/responses/UnsupportedMediaTypeErrorResponse"
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequestsErrorResponse"
@@ -2133,15 +2070,6 @@
         "required": false,
         "schema": {
           "type": "boolean"
-        }
-      },
-      "OffsetType": {
-        "name": "offset_type",
-        "description": "Specify the offset type to be fetched for a given partition",
-        "in": "query",
-        "required": false,
-        "schema": {
-          "type": "string"
         }
       },
       "PartitionId": {
@@ -2871,8 +2799,6 @@
               "is_simple",
               "partition_assignor",
               "state",
-              "type",
-              "is_mixed_consumer_group",
               "coordinator",
               "consumers",
               "lag_summary"
@@ -2893,16 +2819,10 @@
               "state": {
                 "$ref": "#/components/schemas/ConsumerGroupState"
               },
-              "type": {
-                "$ref": "#/components/schemas/ConsumerGroupType"
-              },
-              "is_mixed_consumer_group": {
-                "type": "boolean"
-              },
               "coordinator": {
                 "$ref": "#/components/schemas/Relationship"
               },
-              "consumers": {
+              "consumer": {
                 "$ref": "#/components/schemas/Relationship"
               },
               "lag_summary": {
@@ -2939,20 +2859,9 @@
           "UNKNOWN",
           "PREPARING_REBALANCE",
           "COMPLETING_REBALANCE",
-          "ASSIGNING",
-          "RECONCILING",
           "STABLE",
           "DEAD",
           "EMPTY"
-        ]
-      },
-      "ConsumerGroupType": {
-        "type": "string",
-        "x-extensible-enum": [
-          "UNKNOWN",
-          "CLASSIC",
-          "CONSUMER",
-          "SHARE"
         ]
       },
       "ConsumerLagData": {
@@ -3163,42 +3072,6 @@
                 "items": {
                   "$ref": "#/components/schemas/PartitionData"
                 }
-              }
-            }
-          }
-        ]
-      },
-      "PartitionWithOffsetsData": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Resource"
-          },
-          {
-            "type": "object",
-            "required": [
-              "cluster_id",
-              "topic_name",
-              "partition_id",
-              "earliest_offset",
-              "latest_offset"
-            ],
-            "properties": {
-              "cluster_id": {
-                "type": "string"
-              },
-              "topic_name": {
-                "type": "string"
-              },
-              "partition_id": {
-                "type": "integer"
-              },
-              "earliest_offset": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "latest_offset": {
-                "type": "integer",
-                "format": "int64"
               }
             }
           }
@@ -4516,8 +4389,6 @@
               "is_simple": false,
               "partition_assignor": "org.apache.kafka.clients.consumer.RoundRobinAssignor",
               "state": "STABLE",
-              "type": "CLASSIC",
-              "is_mixed_consumer_group": false,
               "coordinator": {
                 "related": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/brokers/1"
               },
@@ -5209,8 +5080,6 @@
                   "is_simple": false,
                   "partition_assignor": "org.apache.kafka.clients.consumer.RoundRobinAssignor",
                   "state": "STABLE",
-                  "type": "CLASSIC",
-                  "is_mixed_consumer_group": false,
                   "coordinator": {
                     "related": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/brokers/1"
                   },
@@ -5232,8 +5101,6 @@
                   "is_simple": false,
                   "partition_assignor": "org.apache.kafka.clients.consumer.StickyAssignor",
                   "state": "PREPARING_REBALANCE",
-                  "type": "CLASSIC",
-                  "is_mixed_consumer_group": false,
                   "coordinator": {
                     "related": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/brokers/2"
                   },
@@ -5255,8 +5122,6 @@
                   "is_simple": false,
                   "partition_assignor": "org.apache.kafka.clients.consumer.RangeAssignor",
                   "state": "DEAD",
-                  "type": "CLASSIC",
-                  "is_mixed_consumer_group": false,
                   "coordinator": {
                     "related": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/brokers/3"
                   },
@@ -5402,28 +5267,6 @@
                   }
                 }
               ]
-            }
-          }
-        }
-      },
-      "ListPartitionOffsetsResponse": {
-        "description": "The earliest and latest offsets of a partition",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/PartitionWithOffsetsData"
-            },
-            "example": {
-              "kind": "KafkaPartitionWithOffsets",
-              "metadata": {
-                "self": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/topics/topic-1/partitions/1/offset",
-                "resource_name": "crn:///kafka=cluster-1/topic=topic-1/partition=1/offset"
-              },
-              "cluster_id": "cluster-1",
-              "topic_name": "topic-1",
-              "partition_id": 1,
-              "earliest_offset": "10L",
-              "latest_offset": "100L"
             }
           }
         }
@@ -6121,25 +5964,6 @@
           }
         }
       },
-      "BadRequestErrorResponse_ProduceRecords": {
-        "description": "Indicates a bad request error. It could be caused by an unexpected request body format or other forms of request validation failure.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            },
-            "examples": {
-              "header_not_base64_encoded": {
-                "description": "Thrown when headers in the produce-record are not base64 encoded.",
-                "value": {
-                  "error_code": 400,
-                  "message": "Cannot deserialize value of type `byte[]` from String \"\": Unexpected end of base64-encoded String: base64 variant 'MIME-NO-LINEFEEDS' expects padding (one or more '=' characters) at the end. This Base64Variant might have been incorrectly configured"
-                }
-              }
-            }
-          }
-        }
-      },
       "UnprocessableEntity_ProduceRecord": {
         "description": "Indicates a bad request error. It could be caused by an unexpected request body format or other forms of request validation failure.",
         "content": {
@@ -6259,44 +6083,6 @@
             "example": {
               "description": "A sample response from Jetty's DoSFilter.",
               "value": "<html> <head> <meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\"/> <title>Error 429 Too Many Requests</title> </head> <body> <h2>HTTP ERROR 429 Too Many Requests</h2> <table> <tr> <th>URI:</th> <td>/v3/clusters/my-cluster</td> </tr> <tr> <th>STATUS:</th> <td>429</td> </tr> <tr> <th>MESSAGE:</th> <td>Too Many Requests</td> </tr> <tr> <th>SERVLET:</th> <td>default</td> </tr> </table> </body> </html>"
-            }
-          }
-        }
-      },
-      "RequestEntityTooLargeErrorResponse": {
-        "description": "This implies the client is sending a request payload that is larger than the maximum message size the server can accept.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            },
-            "examples": {
-              "produce_records_expects_json": {
-                "description": "Thrown by /records API if payload size exceeds the message max size",
-                "value": {
-                  "error_code": 413,
-                  "message": "The request included a message larger than the maximum message size the server can accept."
-                }
-              }
-            }
-          }
-        }
-      },
-      "UnsupportedMediaTypeErrorResponse": {
-        "description": "This implies the client is sending the request payload format in an unsupported format.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            },
-            "examples": {
-              "produce_records_expects_json": {
-                "description": "Thrown by /records API if payload format content-type doesn't match expected application/json",
-                "value": {
-                  "error_code": 415,
-                  "message": "HTTP 415 Unsupported Media Type"
-                }
-              }
             }
           }
         }

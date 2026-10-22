@@ -18,7 +18,7 @@ original_specification:           # OpenAPI 3.0.0, written by the authors: api/v
   format: yaml
   origin: manual
   created_by: Confluent Kafka REST developers
-  file: openapi-original.yaml
+  file: original/kafka-rest-proxy-openapi.yaml
   source: https://github.com/confluentinc/kafka-rest/blob/534aabbfba81cd74b747dad8cce44280d718a50d/api/v3/openapi.yaml
 
 authentication: none
