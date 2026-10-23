@@ -23,5 +23,11 @@ original_specification:           # OpenAPI 3.0.0, written by the authors: api/v
 
 authentication: none
 
+# 5XX responses are {"error_code", "message"}: the message tells failures apart, with its numbers masked (e.g., the
+# broker of a partition assignment, timestamps). Threshold: different messages can differ in a single word (e.g., the
+# operation that timed out), up to 0.8 similar
 server_errors:
-  similarity_threshold: 0.7
+  similarity_threshold: 0.85
+  preprocessing:
+    - json_fields: {fields: [message]}
+    - mask: [numbers]
